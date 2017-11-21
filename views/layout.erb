@@ -5,6 +5,7 @@
     <title>Postbox</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/stylesheets/pb_whitespace-reset.css">
+    <link rel="stylesheet" href="/stylesheets/pb_application.css">
   </head>
 
   <body>
@@ -24,6 +25,7 @@
       <div class="flash error">
         <%= session.delete(:error) %>
       </div>
+    <% end %>
 
     <main>
       <%== yield %>
