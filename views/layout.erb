@@ -15,6 +15,8 @@
       </div>
     </header>
 
+    <br>
+
     <% if session[:success] %>
       <div class="flash success">
         <%= session.delete(:success) %>
@@ -27,8 +29,18 @@
       </div>
     <% end %>
 
+    <br>
+
     <main>
       <%== yield %>
     </main>
+
+    <footer>
+      <br>
+      
+      <% if logged_in? %>
+        <a href="/logout">Log-out (logged in as <%= @current_user %>)</a>
+      <% end %>
+    </footer>
   </body>
 </html>

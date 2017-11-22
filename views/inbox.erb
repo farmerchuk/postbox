@@ -1,0 +1,16 @@
+<% content_for :header_links do %>
+  <a href="/compose">Send Message</a>
+<% end %>
+
+<% if @messages %>
+  <% @messages.each do |sender, message| %>
+    <div>
+      <p><strong>Sender: <%= sender %></strong></p>
+      <p><%= message %></p>
+    </div>
+
+    <br>
+  <% end %>
+<% else %>
+  <p>No new messages</p>
+<% end %>

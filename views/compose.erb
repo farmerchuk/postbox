@@ -1,0 +1,38 @@
+<% content_for :header_links do %>
+  <a href="/inbox">View My Messages</a>
+<% end %>
+
+<form method="get" action="/search">
+  <label for="email">Add Contact:</label>
+  <div>
+    <input name="email" type="text" placeholder="binx@gmail.com" value="">
+    <button type="submit">Search</button>
+  </div>
+</form>
+
+<br>
+
+<% if @contacts %>
+  <form method="post" action="/send">
+    <ul>
+      <% @contacts.each.with_index do |(user_id, name), idx| %>
+        <li>
+          <input name="user<%= idx %>" type="checkbox" value="<%= user_id %>"> <%= name %><br>
+        </li>
+      <% end %>
+    </ul>
+
+    <br>
+
+    <label for="message">Message:</label>
+    <div>
+      <textarea name="message" rows="20" cols="100" value="Jason"><%= params[:message] %></textarea>
+    </div>
+
+    <button type="submit">Send Message</button>
+  </form>
+<% else %>
+  <p>You can compose a new message once you add a contact</p>
+<% end %>
+
+<br>
