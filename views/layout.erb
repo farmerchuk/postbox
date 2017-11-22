@@ -37,9 +37,9 @@
 
     <footer>
       <br>
-      
+
       <% if logged_in? %>
-        <a href="/logout">Log-out (logged in as <%= @current_user %>)</a>
+        <a href="/logout">Log-out (logged in as <%= @user_name %>)</a>
       <% end %>
     </footer>
   </body>

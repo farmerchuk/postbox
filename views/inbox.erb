@@ -3,10 +3,14 @@
 <% end %>
 
 <% if @messages %>
-  <% @messages.each do |sender, message| %>
+  <% @messages.each do |sender, message, file_name| %>
     <div>
       <p><strong>Sender: <%= sender %></strong></p>
       <p><%= message %></p>
+      <form method="post" action="/delete">
+        <input name="file_name" type="hidden" value="<%= file_name %>">
+        <button type="submit">(delete)</button>
+      </form>
     </div>
 
     <br>

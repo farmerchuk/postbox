@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'sinatra/content_for'
 require 'tilt/erubis'
+require 'bcrypt'
 require 'yaml'
 require 'date'
 
@@ -16,7 +17,7 @@ helpers do
 end
 
 before do
-  @current_user = get_name_by(session[:user]) if logged_in?
+  @user_name = get_name_by(session[:user]) if logged_in?
 end
 
 # Helper methods
@@ -41,6 +42,11 @@ end
 def user_contacts_path(user_id)
   path = user_data_path(user_id)
   File.join(path, 'contacts.yml')
+end
+
+def user_password_path(user_id)
+  path = user_data_path(user_id)
+  File.join(path, 'password.yml')
 end
 
 def user_messages_path(user_id)
@@ -69,6 +75,13 @@ def valid_user?(email)
   File.directory?(user_path)
 end
 
+def correct_password?(user_id, password)
+  password_file_path = user_password_path(user_id)
+  password_on_file = File.read(password_file_path)
+  bcrypt_password = BCrypt::Password.new(password_on_file)
+  bcrypt_password == password
+end
+
 def get_user_id_by(email)
   encode_email(email)
 end
@@ -89,11 +102,12 @@ def get_messages_by(user_id)
   path = user_messages_path(user_id)
   file_names = Dir.glob(path + '/*')
 
-  file_names.each do |file_name|
-    sender_id = File.basename(file_name).split('-').first
+  file_names.each do |file_path_name|
+    file_name = File.basename(file_path_name)
+    sender_id = file_name.split('-').first
     sender_name = get_name_by(sender_id)
-    message = File.read(file_name)
-    messages << [sender_name, message]
+    message = File.read(file_path_name)
+    messages << [sender_name, message, file_name]
   end
 
   return nil if messages.empty?
@@ -133,30 +147,37 @@ end
 
 post '/login' do
   email = params[:email]
+  password = params[:password]
+  bcrypt_password = BCrypt::Password.create(password)
   user_id = encode_email(email)
 
-  if valid_email?(email)
-    if valid_user?(email)
+  if valid_email?(email) && !password.empty?
+    if valid_user?(email) && correct_password?(user_id, password)
       session[:user] = user_id
       redirect '/inbox'
+    elsif valid_user?(email)
+      session[:error] = 'Incorrect email or password'
+      erb :login, layout: :layout
     else
-      redirect "/join?email=#{email}"
+      redirect "/join?email=#{email}&password=#{bcrypt_password}"
     end
   else
-    session[:error] = 'Please enter a valid email address.'
+    session[:error] = 'Please enter a valid email address and password.'
     erb :login, layout: :layout
   end
 end
 
 get '/join' do
   @email = params[:email]
+  @password = params[:password]
 
-  redirect '/login' unless @email
+  redirect '/login' unless @email && @password
   erb :join, layout: :layout
 end
 
 post '/join' do
   @email = params[:email]
+  @password = params[:password]
   @name = params[:name]
 
   if valid_name?(@name) && valid_email?(@email)
@@ -166,7 +187,9 @@ post '/join' do
     Dir.mkdir(new_user_dir + "/messages")
     name_file = user_name_path(user_id)
     contacts_file = user_contacts_path(user_id)
+    password_file = user_password_path(user_id)
     File.write(name_file, @name)
+    File.write(password_file, @password)
     File.write(contacts_file, '')
 
     session[:user] = user_id
@@ -228,4 +251,20 @@ get '/inbox' do
   @user_id = session[:user]
   @messages = get_messages_by(@user_id)
   erb :inbox, layout: :layout
+end
+
+post '/delete' do
+  @user_id = session[:user]
+  file_name = params[:file_name]
+  messages_path = user_messages_path(@user_id)
+  file_path = File.join(messages_path, file_name)
+
+  if File.exist?(file_path)
+    File.delete(file_path)
+    session[:success] = 'Message deleted.'
+    redirect '/inbox'
+  else
+    session[:error] = 'Oops, something went wrong.'
+    erb :inbox, layout: :layout
+  end
 end
