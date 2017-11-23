@@ -53,11 +53,12 @@ def user_messages_path(user_id)
   File.expand_path("../data/#{user_id}/messages", __FILE__)
 end
 
-def new_message_file_name(user_id)
-  user_id + '-' + DateTime.now(Date::ITALY).strftime('%Y%m%d%H%M%S')
+def new_message_file_name(recipient_id, sender_id)
+  recipient_id + '-' + sender_id + '-' + DateTime.now(Date::ITALY).strftime('%Y%m%d%H%M%S')
 end
 
 def encode_email(email)
+  return nil if email.empty?
   email.downcase.gsub(/[\W]/, '_')
 end
 
@@ -101,17 +102,24 @@ def get_messages_by(user_id)
   messages = []
   path = user_messages_path(user_id)
   file_names = Dir.glob(path + '/*')
+  file_names.sort_by! { |f| File.birthtime(f) }.reverse!
 
   file_names.each do |file_path_name|
     file_name = File.basename(file_path_name)
-    sender_id = file_name.split('-').first
-    sender_name = get_name_by(sender_id)
+    recipient_id, sender_id = file_name.split('-')
+
     message = File.read(file_path_name)
-    messages << [sender_name, message, file_name]
+    messages << [recipient_id, sender_id, message, file_name]
   end
 
   return nil if messages.empty?
-  messages.reverse!
+  messages
+end
+
+def existing_contact?(user_id, target_id)
+  existing_contacts = get_contacts_by(user_id)
+  return false unless existing_contacts
+  existing_contacts.has_key?(target_id)
 end
 
 def logged_in?
@@ -131,6 +139,14 @@ end
 get '/compose' do
   user_id = session[:user]
   @contacts = get_contacts_by(user_id)
+  @reply_to = params[:sender_id] if params[:sender_id]
+
+  messages = get_messages_by(user_id)
+  if messages
+    @inbox = messages.size
+  else
+    @inbox = 0
+  end
 
   erb :compose, layout: :layout
 end
@@ -146,20 +162,20 @@ get '/login' do
 end
 
 post '/login' do
-  email = params[:email]
+  @email = params[:email]
   password = params[:password]
   bcrypt_password = BCrypt::Password.create(password)
-  user_id = encode_email(email)
+  user_id = encode_email(@email)
 
-  if valid_email?(email) && !password.empty?
-    if valid_user?(email) && correct_password?(user_id, password)
+  if valid_email?(@email) && !password.empty?
+    if valid_user?(@email) && correct_password?(user_id, password)
       session[:user] = user_id
       redirect '/inbox'
-    elsif valid_user?(email)
+    elsif valid_user?(@email)
       session[:error] = 'Incorrect email or password'
       erb :login, layout: :layout
     else
-      redirect "/join?email=#{email}&password=#{bcrypt_password}"
+      redirect "/join?email=#{@email}&password=#{bcrypt_password}"
     end
   else
     session[:error] = 'Please enter a valid email address and password.'
@@ -207,7 +223,16 @@ get '/search' do
   target_email = params[:email]
   target_user_id = get_user_id_by(target_email)
 
-  if valid_user?(target_email) && target_user_id != session[:user]
+  if target_user_id.nil?
+    session[:error] = "Search field cannot be blank."
+    erb :compose, layout: :layout
+  elsif target_user_id == session[:user]
+    session[:error] = "You can't add yourself, smarty."
+    erb :compose, layout: :layout
+  elsif existing_contact?(@user_id, target_user_id)
+    session[:error] = "That person is already a contact."
+    erb :compose, layout: :layout
+  elsif valid_user?(target_email)
     target_name = get_name_by(target_user_id)
     contacts_path = user_contacts_path(@user_id)
 
@@ -215,7 +240,7 @@ get '/search' do
       f.puts "#{target_user_id}: #{target_name}"
     end
 
-    session[:success] = "#{target_name} added to your list of contacts!"
+    session[:success] = "#{target_name} added to contacts!"
     redirect '/compose'
   else
     session[:error] = 'Sorry, could not find that person.'
@@ -223,7 +248,7 @@ get '/search' do
   end
 end
 
-post '/send' do
+post '/compose' do
   recipients = params.select { |param, _| param.include?('user') }.values
 
   if !recipients.empty?
@@ -231,10 +256,15 @@ post '/send' do
     message = params[:message]
 
     recipients.each do |recipient_id|
-      path = user_messages_path(recipient_id)
-      new_message_file_path = File.join(path, new_message_file_name(sender_id))
-      new_message_file = new_message_file_path + '.txt'
-      File.write(new_message_file, message)
+      recipient_messages_path = user_messages_path(recipient_id)
+      recipient_messages_file_path = File.join(recipient_messages_path, new_message_file_name(recipient_id, sender_id))
+      recipient_file = recipient_messages_file_path + '.txt'
+      File.write(recipient_file, message)
+
+      sender_messages_path = user_messages_path(sender_id)
+      sender_messages_file_path = File.join(sender_messages_path, new_message_file_name(recipient_id, sender_id))
+      sender_file = sender_messages_file_path + '.txt'
+      File.write(sender_file, message)
     end
 
     session[:success] = 'Message delivered!'

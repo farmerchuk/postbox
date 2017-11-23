@@ -1,7 +1,9 @@
+<img src="/images/pb-logotype.png" width="400">
+
 <form method="post" action="/login">
   <label for="email">Enter your email address:</label>
   <div>
-    <input name="email" type="text" value="">
+    <input name="email" type="text" value="<%= @email %>">
   <div>
 
   <br>
@@ -12,6 +14,6 @@
   <div>
 
   <br>
-  
-  <button type="submit">Login/Join</button>
+
+  <input id="login" type="submit" value="Login or Join">
 </form>

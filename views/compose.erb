@@ -1,38 +1,46 @@
 <% content_for :header_links do %>
-  <a href="/inbox">View My Messages</a>
+  <form method="get" action="/inbox">
+    <input type="submit" value="View Messages">
+  </form>
 <% end %>
 
 <form method="get" action="/search">
-  <label for="email">Add Contact:</label>
+  <label for="email"><strong>Add a new contact:</strong></label>
   <div>
     <input name="email" type="text" placeholder="binx@gmail.com" value="">
-    <button type="submit">Search</button>
+    <input id="search" type="submit" value="Search">
   </div>
 </form>
 
 <br>
 
 <% if @contacts %>
-  <form method="post" action="/send">
+  <form method="post" action="/compose">
+    <label><strong>Your Contacts:</strong></label>
     <ul>
       <% @contacts.each.with_index do |(user_id, name), idx| %>
         <li>
-          <input name="user<%= idx %>" type="checkbox" value="<%= user_id %>"> <%= name %><br>
+          <% if user_id == @reply_to %>
+            <input name="user<%= idx %>" type="checkbox" value="<%= user_id %>" checked> <%= name %><br>
+          <% else %>
+            <input name="user<%= idx %>" type="checkbox" value="<%= user_id %>"> <%= name %><br>
+          <% end %>
         </li>
       <% end %>
     </ul>
 
     <br>
 
-    <label for="message">Message:</label>
+    <label for="message"><strong>Message:</strong></label>
     <div>
-      <textarea name="message" rows="20" cols="100" value="Jason"><%= params[:message] %></textarea>
+      <textarea name="message" value="Jason"><%= params[:message] %></textarea>
     </div>
 
-    <button type="submit">Send Message</button>
+    <input id="send" type="submit" value="Send Message">
   </form>
 <% else %>
-  <p>You can compose a new message once you add a contact</p>
+  <br>
+  <p><center>You can compose a new message once you add a contact.</center></p>
 <% end %>
 
 <br>

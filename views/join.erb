@@ -1,9 +1,15 @@
+<h1><center>Welcome!</center></h1>
+
+<p><center>Looks like you're new to Postbox. Just add your name and you'll be ready to start messaging in a jiffy!</center></p>
+
+<br><br>
+
 <form method="post" action="/join">
   <input name="email" type="hidden" value="<%= @email %>">
   <input name="password" type="hidden" value="<%= @password %>">
-  <label for="name">Enter your name:</label>
+  <label for="name"><strong>Friends call me:</strong></label>
   <div>
     <input name="name" type="text" value="">
-    <button type="submit">Join</button>
+    <input id="login" type="submit" value="Join">
   </div>
 </form>

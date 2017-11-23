@@ -6,16 +6,15 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/stylesheets/pb_whitespace-reset.css">
     <link rel="stylesheet" href="/stylesheets/pb_application.css">
+    <script src="/javascripts/jquery-3.2.1.js"></script>
+    <script src="/javascripts/pb_application.js"></script>
+    <link rel="shortcut icon" href="/favicon.png">
   </head>
 
   <body>
     <header>
-      <div class="actions">
-        <%== yield_content :header_links %>
-      </div>
+      <%== yield_content :header_links %>
     </header>
-
-    <br>
 
     <% if session[:success] %>
       <div class="flash success">
@@ -29,17 +28,15 @@
       </div>
     <% end %>
 
-    <br>
-
     <main>
       <%== yield %>
     </main>
 
     <footer>
-      <br>
-
       <% if logged_in? %>
-        <a href="/logout">Log-out (logged in as <%= @user_name %>)</a>
+        <form method="get" action="/logout">
+          <input id="logout" type="submit" value="Logout <%= @user_name %>">
+        </form>
       <% end %>
     </footer>
   </body>

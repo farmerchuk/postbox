@@ -1,3 +1,219 @@
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
 body {
-  padding: 1em;
+  font: normal 25px "PT Sans", Helvetica, Arial, sans-serif;
+  color: #3f3f3f;
+  background: #ffffff;
+  max-width: 400px;
+  padding: 0px 10px 0px 10px;
+  margin: 50px auto;
+}
+
+h1 {
+  display: inline-block;
+  margin-bottom: 30px;
+  width: 100%;
+  font-size: 40px;
+  color: #449ce5;
+}
+
+main {
+  margin: 50px auto;
+}
+
+main form #delete {
+  padding: 5px 0px 5px 0px;
+  width: 35px;
+  height: 32px;
+  font: normal 14px "PT Sans", Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  background: #4f4f4f;
+}
+
+main form #delete:hover {
+  background-color: #d13b28;
+  cursor: pointer;
+}
+
+main form #login {
+  margin-top: 8px;
+  padding: 12px 0px 12px 0px;
+  width: 100%;
+  font: normal 24px "PT Sans", Helvetica, Arial, sans-serif;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  background: #58b75e;
+}
+
+main form #login:hover {
+  background-color: #4ba851;
+  cursor: pointer;
+}
+
+main form #send {
+  padding: 12px 0px 12px 0px;
+  width: 100%;
+  font: normal 24px "PT Sans", Helvetica, Arial, sans-serif;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  background: #58b75e;
+}
+
+main form #send:hover {
+  background-color: #4ba851;
+  cursor: pointer;
+}
+
+main form #search {
+  margin-top: 8px;
+  padding: 12px 0px 12px 0px;
+  width: 100%;
+  font: normal 24px "PT Sans", Helvetica, Arial, sans-serif;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  background: #58b75e;
+}
+
+main form #search:hover {
+  background-color: #4ba851;
+  cursor: pointer;
+}
+
+input[type="checkbox"] {
+  margin: 0 10px -5px 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  border: 1px solid #a4a4a4;
+  background: #ffffff;
+  border-radius: 4px;
+  box-sizing: border-box;
+  position: relative;
+  box-sizing: content-box;
+  width: 30px;
+  height: 30px;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #58b75e;
+}
+
+input[type="checkbox"]:focus {
+  outline: 0 none;
+  box-shadow: none;
+}
+
+ul li {
+  margin: 10px auto;
+  padding: 0 0 0 0;
+}
+
+form input[type="text"] {
+  width: 100%;
+  height: 58px;
+  padding: 15px 20px;
+  font: normal 20px "PT Sans", Helvetica, Arial, sans-serif;
+  border: 1px solid #a4a4a4;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+form input[type="password"] {
+  width: 100%;
+  height: 58px;
+  padding: 15px 20px;
+  font: normal 20px "PT Sans", Helvetica, Arial, sans-serif;
+  border: 1px solid #a4a4a4;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+form textarea {
+  width: 100%;
+  height: 200px;
+  padding: 15px 20px;
+  font: normal 25px "PT Sans", Helvetica, Arial, sans-serif;
+  border: 1px solid #a4a4a4;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+header form input[type="submit"] {
+  width: 300px;
+  margin: 0px 50px;
+  padding: 12px 30px 12px 30px;
+  font: normal 24px "PT Sans", Helvetica, Arial, sans-serif;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  background: #449ce5;
+}
+
+header form input[type="submit"]:hover {
+  background-color: #2286d8;
+  cursor: pointer;
+}
+
+footer form #logout {
+  width: 300px;
+  margin: 0px 50px;
+  padding: 12px 30px 12px 30px;
+  font: normal 24px "PT Sans", Helvetica, Arial, sans-serif;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  background: #dd5f4f;
+}
+
+footer form #logout:hover {
+  background-color: #d13b28;
+  cursor: pointer;
+}
+
+.flash {
+  margin: 50px 0 0 0;
+  max-width: 100%;
+  padding: 10px 20px;
+  color: #3399cc;
+  background: #CBE5F2;
+  text-align: center;
+}
+
+.flash p {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.flash.error {
+  color: #ff6633;
+  background: #FFCFBF;
+}
+
+.flash.success {
+  color: #33cc99;
+  background: #CBF2E5;
+}
+
+#to_user {
+  color: #428ff4;
+  text-align: right;
+}
+
+#from_user {
+  color: #1ca54a;
+  text-align: left;
+}
+
+#from_user:hover {
+  color: #127c36;
+  cursor: pointer;
 }

@@ -1,20 +1,27 @@
 <% content_for :header_links do %>
-  <a href="/compose">Send Message</a>
+  <form method="get" action="/compose">
+    <input type="submit" value="Compose">
+  </form>
 <% end %>
 
 <% if @messages %>
-  <% @messages.each do |sender, message, file_name| %>
-    <div>
-      <p><strong>Sender: <%= sender %></strong></p>
-      <p><%= message %></p>
-      <form method="post" action="/delete">
-        <input name="file_name" type="hidden" value="<%= file_name %>">
-        <button type="submit">(delete)</button>
-      </form>
-    </div>
+  <% @messages.each do |recipient_id, sender_id, message, file_name| %>
+    <% if sender_id == @user_id %>
+      <div id="to_user">
+        <strong>Sent to: <%= get_name_by(recipient_id) %></strong>
+        <p><%= message %></p>
+      </div>
+    <% else %>
+      <a href="/compose?sender_id=<%= sender_id %>">
+        <div id="from_user">
+          <strong>From: <%= get_name_by(sender_id) %></strong>
+          <p><%= message %></p>
+        </div>
+      </a>
+    <% end %>
 
     <br>
   <% end %>
 <% else %>
-  <p>No new messages</p>
+  <img src="/images/empty_inbox.png" width="400">
 <% end %>
