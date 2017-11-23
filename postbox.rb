@@ -12,10 +12,6 @@ configure do
   set :session_secret, "secret"
 end
 
-helpers do
-
-end
-
 before do
   @user_name = get_name_by(session[:user]) if logged_in?
 end
