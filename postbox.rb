@@ -122,6 +122,10 @@ def logged_in?
   session[:user]
 end
 
+def redirect_unless_logged_in
+  redirect '/login' unless logged_in?
+end
+
 # Application Routes
 
 get '/' do
@@ -133,6 +137,8 @@ get '/' do
 end
 
 get '/compose' do
+  redirect_unless_logged_in
+
   user_id = session[:user]
   @contacts = get_contacts_by(user_id)
   @reply_to = params[:sender_id] if params[:sender_id]
@@ -148,6 +154,8 @@ get '/compose' do
 end
 
 get '/logout' do
+  redirect_unless_logged_in
+
   session[:user] = nil
   session[:success] = 'You successfully logged out.'
   redirect '/login'
@@ -180,6 +188,8 @@ post '/login' do
 end
 
 get '/join' do
+  redirect_unless_logged_in
+
   @email = params[:email]
   @password = params[:password]
 
@@ -188,6 +198,8 @@ get '/join' do
 end
 
 post '/join' do
+  redirect_unless_logged_in
+
   @email = params[:email]
   @password = params[:password]
   @name = params[:name]
@@ -214,6 +226,8 @@ post '/join' do
 end
 
 get '/search' do
+  redirect_unless_logged_in
+
   @user_id = session[:user]
   @contacts = get_contacts_by(@user_id)
   target_email = params[:email]
@@ -245,6 +259,8 @@ get '/search' do
 end
 
 post '/compose' do
+  redirect_unless_logged_in
+
   recipients = params.select { |param, _| param.include?('user') }.values
 
   if !recipients.empty?
@@ -274,12 +290,16 @@ post '/compose' do
 end
 
 get '/inbox' do
+  redirect_unless_logged_in
+
   @user_id = session[:user]
   @messages = get_messages_by(@user_id)
   erb :inbox, layout: :layout
 end
 
 post '/delete' do
+  redirect_unless_logged_in
+  
   @user_id = session[:user]
   file_name = params[:file_name]
   messages_path = user_messages_path(@user_id)
