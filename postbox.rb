@@ -188,8 +188,6 @@ post '/login' do
 end
 
 get '/join' do
-  redirect_unless_logged_in
-
   @email = params[:email]
   @password = params[:password]
 
@@ -198,8 +196,6 @@ get '/join' do
 end
 
 post '/join' do
-  redirect_unless_logged_in
-
   @email = params[:email]
   @password = params[:password]
   @name = params[:name]
@@ -299,7 +295,7 @@ end
 
 post '/delete' do
   redirect_unless_logged_in
-  
+
   @user_id = session[:user]
   file_name = params[:file_name]
   messages_path = user_messages_path(@user_id)
